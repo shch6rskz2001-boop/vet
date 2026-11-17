@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import HeroGallery from '@/components/HeroGallery';
 import ProductCard from '@/components/ProductCard';
 import { categories, products } from '@/lib/products';
 
@@ -7,7 +8,7 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="hero">
+      <section className="hero hero--gallery">
         <div>
           <h1>Все для здоров’я та щастя вашого улюбленця</h1>
           <p>
@@ -18,9 +19,7 @@ export default function HomePage() {
             Перейти до каталогу
           </Link>
         </div>
-        <p className="hero__emoji" aria-hidden="true">
-          🐶🐱🦜
-        </p>
+        <HeroGallery />
       </section>
 
       <section aria-labelledby="categories-title">
