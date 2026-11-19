@@ -1,5 +1,7 @@
 import Image from 'next/image';
 
+const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+
 const photos = [
   {
     src: '/dog-cat.jpg',
@@ -39,7 +41,7 @@ export default function HeroGallery() {
       {photos.map((photo, index) => (
         <li key={photo.src} className="gallery__item">
           <Image
-            src={photo.src}
+            src={base + photo.src}
             alt={photo.alt}
             width={photo.width}
             height={photo.height}
