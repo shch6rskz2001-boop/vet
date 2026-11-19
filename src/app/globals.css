@@ -692,3 +692,16 @@ a:focus-visible {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+.gallery--emoji .gallery__item:first-child {
+  grid-column: auto;
+  aspect-ratio: 1 / 1;
+}
+
+.gallery__item--emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  font-size: clamp(3rem, 8vw, 5rem);
+}
