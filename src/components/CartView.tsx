@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { formatPrice, getProductById, Product } from '@/lib/products';
 import CheckoutForm from './CheckoutForm';
@@ -13,6 +14,7 @@ interface Line {
 
 export default function CartView() {
   const { items, setQty, remove, clear } = useCart();
+  const { user, ready, addOrder } = useAuth();
   const [done, setDone] = useState(false);
 
   const lines: Line[] = items.flatMap((item) => {
@@ -27,6 +29,9 @@ export default function CartView() {
       <div className="notice">
         <h2>Дякуємо за замовлення! 🎉</h2>
         <p>Наш менеджер зателефонує вам для підтвердження.</p>
+        <p>
+          Історія замовлень доступна в <Link href="/account">особистому кабінеті</Link>.
+        </p>
         <Link href="/catalog" className="btn btn--primary">
           Повернутись до каталогу
         </Link>
@@ -96,12 +101,34 @@ export default function CartView() {
         </button>
       </div>
 
-      <CheckoutForm
-        onSubmitted={() => {
-          clear();
-          setDone(true);
-        }}
-      />
+      {!ready ? null : user ? (
+        <CheckoutForm
+          initial={{ name: user.name, phone: user.phone, city: user.city }}
+          onSubmitted={(values) => {
+            addOrder(
+              lines.map((l) => ({
+                id: l.product.id,
+                name: l.product.name,
+                price: l.product.price,
+                qty: l.qty,
+              })),
+              total,
+              values.delivery
+            );
+            clear();
+            setDone(true);
+          }}
+        />
+      ) : (
+        <div className="notice">
+          <h2>Увійдіть, щоб оформити замовлення</h2>
+          <p>Замовлення зберігаються в особистому кабінеті.</p>
+          <p>
+            <Link href="/login" className="btn btn--primary">Увійти</Link>{' '}
+            <Link href="/register" className="btn btn--ghost">Зареєструватись</Link>
+          </p>
+        </div>
+      )}
     </div>
   );
 }

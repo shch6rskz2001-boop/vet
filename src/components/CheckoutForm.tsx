@@ -25,25 +25,26 @@ const schema = Yup.object({
   comment: Yup.string().max(300, 'Максимум 300 символів'),
 });
 
-const initialValues: CheckoutValues = {
-  name: '',
-  phone: '+380',
-  city: '',
-  delivery: '',
-  comment: '',
-};
-
 interface Props {
-  onSubmitted: () => void;
+  initial: Partial<CheckoutValues>;
+  onSubmitted: (values: CheckoutValues) => void;
 }
 
-export default function CheckoutForm({ onSubmitted }: Props) {
+export default function CheckoutForm({ initial, onSubmitted }: Props) {
+  const initialValues: CheckoutValues = {
+    name: initial.name ?? '',
+    phone: initial.phone || '+380',
+    city: initial.city ?? '',
+    delivery: '',
+    comment: '',
+  };
+
   const handleSubmit = (
-    _values: CheckoutValues,
+    values: CheckoutValues,
     helpers: FormikHelpers<CheckoutValues>
   ) => {
     helpers.resetForm();
-    onSubmitted();
+    onSubmitted(values);
   };
 
   return (
@@ -84,9 +85,9 @@ export default function CheckoutForm({ onSubmitted }: Props) {
             <label htmlFor="delivery">Доставка</label>
             <select id="delivery" {...getFieldProps('delivery')}>
               <option value="">Оберіть спосіб</option>
-              <option value="nova-poshta">Нова пошта (відділення)</option>
-              <option value="courier">Кур’єр</option>
-              <option value="pickup">Самовивіз</option>
+              <option value="Нова пошта (відділення)">Нова пошта (відділення)</option>
+              <option value="Кур’єр">Кур’єр</option>
+              <option value="Самовивіз">Самовивіз</option>
             </select>
             {touched.delivery && errors.delivery && (
               <p className="error" role="alert">{errors.delivery}</p>

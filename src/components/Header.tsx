@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 
 const links = [
@@ -13,6 +14,13 @@ const links = [
 export default function Header() {
   const pathname = usePathname();
   const { count } = useCart();
+  const { user, ready } = useAuth();
+
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname.startsWith(href);
+
+  const authHref = user ? '/account' : '/login';
+  const authLabel = ready && user ? 'Кабінет' : 'Вхід';
 
   return (
     <header className="header">
@@ -22,23 +30,29 @@ export default function Header() {
         </Link>
         <nav aria-label="Основна навігація">
           <ul className="nav">
-            {links.map((link) => {
-              const active =
-                link.href === '/'
-                  ? pathname === '/'
-                  : pathname.startsWith(link.href);
-              return (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={active ? 'nav__link nav__link--active' : 'nav__link'}
-                    aria-current={active ? 'page' : undefined}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              );
-            })}
+            {links.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className={
+                    isActive(link.href) ? 'nav__link nav__link--active' : 'nav__link'
+                  }
+                  aria-current={isActive(link.href) ? 'page' : undefined}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                href={authHref}
+                className={
+                  pathname.startsWith(authHref) ? 'nav__link nav__link--active' : 'nav__link'
+                }
+              >
+                {authLabel}
+              </Link>
+            </li>
             <li>
               <Link href="/cart" className="cart-link">
                 Кошик
